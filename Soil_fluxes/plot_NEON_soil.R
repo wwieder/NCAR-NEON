@@ -53,12 +53,8 @@ p1 <- ggplot(sObs %>% filter(finalQF==0),
              position=position_jitter()) +
   facet_wrap(~ verticalPosition) +
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
-#  theme(legend.title = element_blank() ) +
+  ylim(-10, 30) + #one plot sensor has errors  
   ggtitle('HARV') 
-
-
-#  ggtitle("Temperature: range 1-10") +
-#  theme_ipsum()
 p1
 
 p2 <- ggplot(sObs %>% filter(VSWCFinalQF==0),
