@@ -22,13 +22,13 @@ if (file.exists('/Users/wwieder/')){
   dir <- ("/Users/wwieder/Will/git_repos_local/NCAR-NEON/Soil_fluxes")
   setwd(dir)
 }
+site = 'NIWO'
+# read in & join  data (this all from site)
+tsoi <- read.csv(paste0(dir, "/filesToStack00041/stackedFiles/ST_",site,"_30_minute.csv"), 
+                        header = T)
 
-# read in & join  data (this all from HRVF)
-tsoi <- read.csv(paste(dir, "/filesToStack00041/stackedFiles/ST_30_minute.csv", 
-                       sep = "/"), header = T)
-
-theta <- read.csv(paste(dir, "/filesToStack00094/stackedFiles/SWS_30_minute.csv", 
-                        sep = "/"), header = T)
+theta <- read.csv(paste0(dir, "/filesToStack00094/stackedFiles/SWS_",site,"_30_minute.csv"), 
+                 header = T)
 
 str(tsoi)
 tsoi$startDateTime <- ymd_hms(tsoi$startDateTime)
@@ -53,8 +53,8 @@ p1 <- ggplot(sObs %>% filter(finalQF==0),
              position=position_jitter()) +
   facet_wrap(~ verticalPosition) +
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
-  ylim(-10, 30) + #one plot sensor has errors  
-  ggtitle('HARV') 
+  ylim(-15, 30) + #one plot sensor has errors  
+  ggtitle(site) 
 p1
 
 p2 <- ggplot(sObs %>% filter(VSWCFinalQF==0),
@@ -64,19 +64,40 @@ p2 <- ggplot(sObs %>% filter(VSWCFinalQF==0),
              position=position_jitter()) +
   facet_wrap(~ verticalPosition) +
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
-#  theme(legend.title = element_blank() ) +
-  ggtitle('HARV') 
-#  theme_ipsum()
+  ylim(0, 0.5) + #one plot sensor has errors  
+  ggtitle(site) 
 p2
 
-{
-  pdf(file = "HARV_sensors.pdf",   # The directory you want to save the file in
-    width = 6, # The width of the plot in inches
-    height = 4) # The height of the plot in inches
+# look at just one depth
+p3 <- ggplot(sObs %>% filter(VSWCFinalQF==0) %>% 
+               filter(verticalPosition==503),
+             aes(x=startDateTime, y=VSWCMean , 
+                 color=as.factor(horizontalPosition) )) +
+  geom_point(size=0.5, show.legend = FALSE, alpha=0.3 , 
+             position=position_jitter()) +
+  ylim(0, 0.4) + #one plot sensor has errors  
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
+  ggtitle(paste(site, ' verticalPosition=503') ) 
+p3
 
-  p1
-  dev.next()
+pdf(file = paste0(site,"_sensors.pdf"), width = 6, height = 4) 
+p1
+dev.next()
+p2
+dev.next()
+p3
+dev.off()
 
-  p2
-  dev.off()
-}
+print(sObs$startDateTime)
+p4 <- ggplot(sObs %>% filter(finalQF==0) %>% 
+               filter(verticalPosition==502) %>%
+               filter(startDateTime>= as.Date("2019-01-01")) %>%
+               filter(startDateTime< as.Date("2020-01-01")),
+             aes(x=startDateTime, y=soilTempMean , 
+                 color=as.factor(horizontalPosition) )) +
+  geom_point(size=0.5, show.legend = FALSE, alpha=0.3 , 
+             position=position_jitter()) +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
+  ggtitle(paste(site, ' verticalPosition=502') ) 
+
+p4
