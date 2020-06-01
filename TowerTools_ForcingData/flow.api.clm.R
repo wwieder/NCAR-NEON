@@ -1,11 +1,25 @@
+# also needs the Noble  package
+install.packages("remotes")
+remotes::install_github("rhlee12/Noble")
+library('Noble')
+
 #Call the R HDF5 Library
 packReq <- c("rhdf5", "eddy4R.base", "neonUtilities", "REddyProc", "ncdf4")
+
+library(devtools)
+if (!requireNamespace("BiocManager", quietly = TRUE))
+  install.packages("BiocManager")
+
+BiocManager::install("rhdf5")
+install_github('NEONScience/NEON-utilities/neonUtilities')
+devtools::install_github('NeonScience/eddy4r/pack/eddy4R.base')
+# see https://github.com/NEONScience/eddy4R/README for eddy4R install
 
 #Install and load all required packages
 lapply(packReq, function(x) {
   print(x)
   if(require(x, character.only = TRUE) == FALSE) {
-    install.packages(x)
+    #install.packages(x)
     library(x, character.only = TRUE)
   }})
 
@@ -13,7 +27,7 @@ lapply(packReq, function(x) {
 #Workflow parameters
 #############################################################
 #Which NEON site are we grabbing data from (4-letter ID)
-Site <- "HARV"
+Site <- "NIWO"
 #Which type of data package (expanded or basic)
 Pack <- "basic"
 #Time averaging period
@@ -22,7 +36,7 @@ TimeAgr <- 30
 dateBgn <- "2018-01-01"
 
 #End date for date grabbing
-dateEnd <- "2018-12-31"
+dateEnd <- "2018-01-31"
 
 
 #The version data for the FP standard conversion processing
@@ -30,14 +44,15 @@ ver = paste0("v",format(Sys.time(), "%Y%m%dT%H%m"))
 #Download directory for HDF5 files from the API
 DirDnld=tempdir()
 #paste0("~/eddy/data/Ameriflux/",ver,"/",site)
+
 #Output directory
-if("DIROUT" %in% base::names(base::Sys.getenv())) {
-  DirOutBase <- Sys.getenv("DIROUT")
-}else{  
+#if("DIROUT" %in% base::names(base::Sys.getenv())) {
+#  DirOutBase <- Sys.getenv("DIROUT")
+#}else{  
   #DirOut <- "N:/Science/FIUDATA/IPT_data/dynamic/AmeriFlux/" #Default folder Ameriflux data output
-  DirOutBase <-paste0("~/eddy/data/CLM/",ver)
+DirOutBase <-paste0("~/Users/wwieder/Will/git_repos_local/NCAR-NEON/CLMforcing/",ver)
   
-}
+#}
 
 #############################################################
 
@@ -45,6 +60,7 @@ if("DIROUT" %in% base::names(base::Sys.getenv())) {
 #Append the site to the base output directory
 DirOut <- paste0(DirOutBase, "/", Site)
 #Check if directory exists and create if not
+
 if(!dir.exists(DirOut)) dir.create(DirOut, recursive = TRUE)
 
 
