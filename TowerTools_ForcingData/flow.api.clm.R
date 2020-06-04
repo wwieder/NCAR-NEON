@@ -40,7 +40,7 @@ options(stringsAsFactors=F)
 #Workflow parameters
 #############################################################
 #Which NEON site are we grabbing data from (4-letter ID)
-Site <- "HARV"
+Site <- "NIWO"
 #Which type of data package (expanded or basic)
 Pack <- "basic"
 #Time averaging period
@@ -52,7 +52,7 @@ dateBgn <- "2019-01-01"
 dateEnd <- "2019-12-31"
 
 #Base directory for output
-DirOutBase <-paste0("~/eddy/data/CLM/",ver)
+DirOutBase <-paste0("~/Users/wwieder/Desktop/Working_files/NEON/NCAR_NEON/NEONforcing/",ver)
 #Download directory for HDF5 files from the API
 DirDnld=tempdir()
 
@@ -124,7 +124,7 @@ dataList <- list()
 #Read data from downloaded zip files
 dataList$dp04 <- neonUtilities::stackEddy(filepath=paste0(DirDnld,"/filesToStack00200/"), level = "dp04", avg = 30)
 dataList$dp01 <- neonUtilities::stackEddy(filepath=paste0(DirDnld,"/filesToStack00200/"), level = "dp01", avg = 30)  
-  #lapply(setDate, function(x) {
+# lapply(setDate, function(x) {
 #   year <- lubridate::year(x)
 #   mnth <- lubridate::month(x)
 #   tryCatch(som::def.neon.api.get.data.hdf5(site=Site,idDpMain=idDpFlux,year=year,mnth=mnth,DirDnld=DirDnld,Rm = TRUE), error=function(e) NULL)
@@ -165,6 +165,7 @@ dataList$dp01 <- neonUtilities::stackEddy(filepath=paste0(DirDnld,"/filesToStack
 # #Combine the monthly data into a single dataframe
 # dataDfFlux <- do.call(rbind.data.frame,dataListFlux)
 
+# This is where you can choose nsae and turb fluxes for NEE
 
 dataDfFlux <-   data.frame(
     "TIMESTAMP_START" = as.POSIXlt(dataList$dp04[[Site]]$timeBgn, format="%Y-%m-%dT%H:%M:%OSZ", tz = "GMT"), #Timestamp represents end of period in ReddyProc
